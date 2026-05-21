@@ -24,6 +24,7 @@ export interface Tab {
   savedContent: string
   isDirty: boolean
   viewMode: ViewMode
+  fileKind: FileKind
 }
 
 export type ViewMode = 'source' | 'preview' | 'split'

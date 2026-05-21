@@ -1,4 +1,5 @@
-import { type Tab, type ViewMode } from '../types'
+import { type Tab, type ViewMode, type FileKind } from '../types'
+import { classifyFile } from '../utils/fileUtils'
 
 let tabs = $state<Tab[]>([])
 let activeTabId = $state<string | null>(null)
@@ -24,6 +25,7 @@ export function openTab(filePath: string, content: string): string {
 
   const id = crypto.randomUUID()
   const fileName = filePath.split('\\').pop()?.split('/').pop() ?? filePath
+  const ext = fileName.includes('.') ? fileName.split('.').pop() : null
   tabs.push({
     id,
     filePath,
@@ -32,6 +34,7 @@ export function openTab(filePath: string, content: string): string {
     savedContent: content,
     isDirty: false,
     viewMode: 'preview',
+    fileKind: classifyFile(ext ?? null),
   })
   activeTabId = id
   return id
@@ -80,6 +83,7 @@ export function setTabsFromPersisted(
 ): void {
   tabs = restored.map((r) => {
     const fileName = r.filePath.split('\\').pop()?.split('/').pop() ?? r.filePath
+    const ext = fileName.includes('.') ? fileName.split('.').pop() : null
     return {
       id: crypto.randomUUID(),
       filePath: r.filePath,
@@ -88,6 +92,7 @@ export function setTabsFromPersisted(
       savedContent: r.content,
       isDirty: false,
       viewMode: r.viewMode,
+      fileKind: classifyFile(ext ?? null),
     }
   })
   if (activeId && tabs.length > 0) {

@@ -145,9 +145,9 @@
             {#if getActiveTab()!.viewMode === 'source'}
               <EditorPane content={getActiveTab()!.content} tabId={getActiveTab()!.id} />
             {:else if getActiveTab()!.viewMode === 'preview'}
-              <PreviewPane content={getActiveTab()!.content} />
+              <PreviewPane content={getActiveTab()!.content} fileKind={getActiveTab()!.fileKind} />
             {:else if getActiveTab()!.viewMode === 'split'}
-              <SplitPane content={getActiveTab()!.content} tabId={getActiveTab()!.id} />
+              <SplitPane content={getActiveTab()!.content} tabId={getActiveTab()!.id} fileKind={getActiveTab()!.fileKind} />
             {/if}
           {/key}
         {:else}

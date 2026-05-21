@@ -3,7 +3,7 @@
   import { getDebounceMs, getLargeFileThreshold } from '../stores/settings.svelte'
   import { debounce } from '../utils/debounce'
 
-  let { content = '' }: { content?: string } = $props()
+  let { content = '', fileKind = 'markdown' }: { content?: string; fileKind?: string } = $props()
 
   let rendered = $state('')
   let isLarge = $state(false)
@@ -19,11 +19,19 @@
       rendered = `<p style="color:#888;font-style:italic;padding:2em;text-align:center">Preview disabled — large file (${(content.length / 1024 / 1024).toFixed(1)} MB). Use Source mode to edit.</p>`
       return
     }
+    if (fileKind === 'text') {
+      rendered = `<pre style="background:var(--pre-bg,#f5f5f5);padding:16px;border-radius:4px;overflow-x:auto;font-size:13px;line-height:1.5;color:var(--preview-text,#333)"><code>${escapeHtml(content)}</code></pre>`
+      return
+    }
     const key = content.length + ':' + content.slice(0, 100)
     if (key === cacheKey) return
     cacheKey = key
     render(content)
   })
+
+  function escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  }
 </script>
 
 <div class="preview-pane">

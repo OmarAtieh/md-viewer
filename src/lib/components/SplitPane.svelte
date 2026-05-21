@@ -3,9 +3,10 @@
   import EditorPane from './EditorPane.svelte'
   import PreviewPane from './PreviewPane.svelte'
 
-  let { content, tabId, leftLabel = 'Source', rightLabel = 'Preview' }: {
+  let { content, tabId, fileKind = 'markdown', leftLabel = 'Source', rightLabel = 'Preview' }: {
     content: string
     tabId: string
+    fileKind?: string
     leftLabel?: string
     rightLabel?: string
   } = $props()
@@ -22,7 +23,7 @@
   <div class="split-right">
     <div class="split-header">{rightLabel}</div>
     <div class="split-content">
-      <PreviewPane {content} />
+      <PreviewPane {content} {fileKind} />
     </div>
   </div>
 </div>
