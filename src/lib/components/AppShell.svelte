@@ -9,7 +9,7 @@
   import { getTabs, getActiveTab, getActiveTabId, setTabsFromPersisted } from '../stores/tabs.svelte'
   import { getRoot, setRoot, getShowSupportedOnly, setShowSupportedOnly } from '../stores/fileTree.svelte'
   import { isDarkMode, setDarkMode } from '../stores/theme.svelte'
-  import { getDebounceMs, setDebounceMs } from '../stores/settings.svelte'
+  import { getDebounceMs, setDebounceMs, getZoom, setZoom, zoomIn, zoomOut, zoomReset } from '../stores/settings.svelte'
   import { loadState, saveState } from '../utils/persistence'
   import { invoke } from '@tauri-apps/api/core'
   import { debounce } from '../utils/debounce'
@@ -25,6 +25,7 @@
       tabs: tabs.map((t) => ({ filePath: t.filePath, viewMode: t.viewMode })),
       activeTabId: getActiveTabId(),
       debounceMs: getDebounceMs(),
+      zoom: getZoom(),
       lastFolder: getRootPath(),
     })
   }, 500)
@@ -34,6 +35,7 @@
     setDarkMode(state.darkMode)
     setShowSupportedOnly(state.showSupportedOnly)
     setDebounceMs(state.debounceMs)
+    setZoom(state.zoom)
 
     if (state.tabs.length > 0) {
       const restored: { filePath: string; content: string; viewMode: import('../types').ViewMode }[] = []
@@ -95,22 +97,36 @@
     isDarkMode()
     getShowSupportedOnly()
     getDebounceMs()
+    getZoom()
     persist()
   })
 
   function handleKeydown(e: KeyboardEvent) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    const mod = e.ctrlKey || e.metaKey
+    if (mod && e.key === 's') {
       e.preventDefault()
       const btn = document.querySelector('[data-action="save"]') as HTMLButtonElement
       btn?.click()
+    }
+    if (mod && (e.key === '=' || e.key === '+')) {
+      e.preventDefault()
+      zoomIn()
+    }
+    if (mod && e.key === '-') {
+      e.preventDefault()
+      zoomOut()
+    }
+    if (mod && e.key === '0') {
+      e.preventDefault()
+      zoomReset()
     }
   }
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div class="app-shell">
-  <Toolbar />
+<div class="app-shell" style="zoom: {getZoom()}%">
+  <Toolbar {zoomIn} {zoomOut} {zoomReset} zoom={getZoom()} />
   <div class="main-area">
     {#if sidebarOpen && getRoot()}
       <FileTree />
@@ -137,7 +153,7 @@
           <div class="welcome">
             <h2>Markdown Viewer</h2>
             <p>Open a file or folder to get started</p>
-            <p class="shortcuts">Ctrl+O: Open File &middot; Ctrl+Shift+O: Open Folder &middot; Ctrl+S: Save</p>
+            <p class="shortcuts">Ctrl+O: Open File &middot; Ctrl+Shift+O: Open Folder &middot; Ctrl+S: Save &middot; Ctrl+±: Zoom</p>
           </div>
         {/if}
       </div>

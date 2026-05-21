@@ -9,6 +9,7 @@ interface PersistedState {
   tabs: { filePath: string; viewMode: ViewMode }[]
   activeTabId: string | null
   debounceMs: number
+  zoom: number
 }
 
 const defaults: PersistedState = {
@@ -18,6 +19,7 @@ const defaults: PersistedState = {
   tabs: [],
   activeTabId: null,
   debounceMs: 150,
+  zoom: 100,
 }
 
 export function loadState(): PersistedState {

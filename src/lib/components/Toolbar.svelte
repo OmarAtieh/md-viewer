@@ -6,6 +6,13 @@
   import { openTab, getActiveTabId, getAllFilePaths, markClean } from '../stores/tabs.svelte'
   import { isDarkMode, toggleDarkMode } from '../stores/theme.svelte'
 
+  let { zoom = 100, zoomIn = () => {}, zoomOut = () => {}, zoomReset = () => {} }: {
+    zoom?: number
+    zoomIn?: () => void
+    zoomOut?: () => void
+    zoomReset?: () => void
+  } = $props()
+
   let loading = $state(false)
 
   function activeViewMode() {
@@ -124,6 +131,12 @@
     <button onclick={handleSave} title="Save" disabled={!getActiveTab()?.isDirty} data-action="save">Save</button>
     <button onclick={handleSaveAs} title="Save As">Save As</button>
     <span class="separator"></span>
+    <span class="separator"></span>
+    <button onclick={zoomOut} title="Zoom Out">−</button>
+    <span class="zoom-label">{zoom}%</span>
+    <button onclick={zoomIn} title="Zoom In">+</button>
+    <button onclick={zoomReset} title="Reset Zoom">⟲</button>
+    <span class="separator"></span>
     <button onclick={toggleDarkMode} title="Toggle Dark Mode" class="dark-toggle">
       {isDarkMode() ? '☀' : '☾'}
     </button>
@@ -184,5 +197,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .zoom-label {
+    font-size: 12px;
+    color: #888;
+    min-width: 32px;
+    text-align: center;
   }
 </style>
