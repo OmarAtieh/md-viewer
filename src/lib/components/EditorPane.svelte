@@ -12,7 +12,7 @@
 
   let container: HTMLDivElement
   let editor: EditorView | null = null
-  let isLarge = $state(content.length > getLargeFileThreshold())
+  let isLarge = $state(false)
 
   $effect(() => {
     isLarge = content.length > getLargeFileThreshold()
@@ -87,7 +87,7 @@
     font-size: 12px;
     border-bottom: 1px solid #ffc107;
   }
-  .dark .large-file-banner {
+  :global(.dark) .large-file-banner {
     background: #3d3200;
     color: #ffc107;
     border-color: #665500;

@@ -52,29 +52,29 @@
   color: #ddd;
 }
 
-.dark .preview-content :global(code) {
+.dark .preview-content code {
   background: var(--code-bg);
   color: #e6e6e6;
 }
 
-.dark .preview-content :global(pre) {
+.dark .preview-content pre {
   background: var(--pre-bg);
 }
 
-.dark .preview-content :global(th) {
+.dark .preview-content th {
   background: #2d2d2d;
 }
 
-.dark .preview-content :global(td),
-.dark .preview-content :global(th) {
+.dark .preview-content td,
+.dark .preview-content th {
   border-color: #444;
 }
 
-.dark .preview-content :global(a) {
+.dark .preview-content a {
   color: #4da6ff;
 }
 
-.dark .preview-content :global(blockquote) {
+.dark .preview-content blockquote {
   color: var(--blockquote-text);
 }
 
