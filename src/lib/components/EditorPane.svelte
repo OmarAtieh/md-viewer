@@ -1,20 +1,22 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import { basicSetup } from 'codemirror'
-  import { EditorView } from 'codemirror'
-  import { keymap } from '@codemirror/view'
+  import { EditorView, basicSetup } from 'codemirror'
   import { EditorState } from '@codemirror/state'
   import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
+  import { keymap } from '@codemirror/view'
   import { defaultKeymap } from '@codemirror/commands'
   import { updateContent } from '../stores/tabs.svelte'
+  import { getLargeFileThreshold } from '../stores/settings.svelte'
 
   let { content = '', tabId = '' }: { content?: string; tabId?: string } = $props()
 
   let container: HTMLDivElement
   let editor: EditorView | null = null
+  let isLarge = $state(content.length > getLargeFileThreshold())
 
   $effect(() => {
-    if (editor && content !== editor.state.doc.toString()) {
+    isLarge = content.length > getLargeFileThreshold()
+    if (editor && !isLarge && content !== editor.state.doc.toString()) {
       editor.dispatch({
         changes: {
           from: 0,
@@ -61,7 +63,11 @@
   })
 </script>
 
-<div class="editor-pane" bind:this={container}></div>
+<div class="editor-pane" bind:this={container}>
+  {#if isLarge}
+    <div class="large-file-banner">Large file — edit with care, preview disabled</div>
+  {/if}
+</div>
 
 <style>
   .editor-pane {
@@ -70,5 +76,20 @@
   }
   .editor-pane :global(.cm-editor) {
     height: 100%;
+  }
+  .large-file-banner {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 4px 12px;
+    background: #fff3cd;
+    color: #856404;
+    font-size: 12px;
+    border-bottom: 1px solid #ffc107;
+  }
+  .dark .large-file-banner {
+    background: #3d3200;
+    color: #ffc107;
+    border-color: #665500;
   }
 </style>

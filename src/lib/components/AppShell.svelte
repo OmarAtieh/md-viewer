@@ -39,14 +39,15 @@
 
     if (state.tabs.length > 0) {
       const restored: { filePath: string; content: string; viewMode: import('../types').ViewMode }[] = []
-      for (const t of state.tabs) {
+      const readPromises = state.tabs.map(async (t) => {
         try {
           const content: string = await invoke('read_file', { path: t.filePath })
           restored.push({ filePath: t.filePath, content, viewMode: t.viewMode })
         } catch {
           // file no longer accessible, skip
         }
-      }
+      })
+      await Promise.all(readPromises)
       setTabsFromPersisted(restored, state.activeTabId)
     }
 
