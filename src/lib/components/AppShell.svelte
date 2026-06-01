@@ -21,6 +21,7 @@
   let loadingState = $state(true)
   let unlistenOpenFile: UnlistenFn | null = null
   let unlistenPathChanged: UnlistenFn | null = null
+  let unlistenFilesDropped: UnlistenFn | null = null
 
   const persist = debounce(() => {
     const tabs = getTabs()
@@ -122,6 +123,9 @@
           }
         },
       )
+      unlistenFilesDropped = await listen<string[]>('files-dropped', (event) => {
+        void openFilesFromPaths(event.payload)
+      })
     }
 
     await Promise.all([restoreTabs(), restoreFolder(), setupListeners()])
@@ -141,6 +145,7 @@
   onDestroy(() => {
     unlistenOpenFile?.()
     unlistenPathChanged?.()
+    unlistenFilesDropped?.()
   })
 
   async function openFileFromPath(path: string) {
@@ -150,6 +155,10 @@
     } catch (e) {
       console.error('Failed to open file from path:', path, e)
     }
+  }
+
+  async function openFilesFromPaths(paths: string[]) {
+    await Promise.all(paths.map((p) => openFileFromPath(p)))
   }
 
   function isPersistedSupported(ext: string | null): boolean {

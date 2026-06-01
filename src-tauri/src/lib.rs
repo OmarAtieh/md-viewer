@@ -2,7 +2,7 @@ mod commands;
 mod watcher;
 
 use commands::PendingOpen;
-use tauri::{Emitter, Manager};
+use tauri::{DragDropEvent, Emitter, Manager, WindowEvent};
 use watcher::WatcherState;
 
 fn extract_file_path(args: &[String]) -> Option<String> {
@@ -35,6 +35,17 @@ pub fn run() {
         .manage(PendingOpen(std::sync::Mutex::new(initial_file)))
         .manage(WatcherState {
             watchers: std::sync::Mutex::new(std::collections::HashMap::new()),
+        })
+        .on_window_event(|window, event| {
+            if let WindowEvent::DragDrop(DragDropEvent::Drop { paths, .. }) = event {
+                let owned: Vec<String> = paths
+                    .iter()
+                    .map(|p| p.to_string_lossy().to_string())
+                    .collect();
+                if !owned.is_empty() {
+                    let _ = window.emit("files-dropped", owned);
+                }
+            }
         })
         .invoke_handler(tauri::generate_handler![
             commands::list_dir,
