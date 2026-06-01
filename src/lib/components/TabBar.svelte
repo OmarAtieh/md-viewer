@@ -7,7 +7,7 @@
 
   function handleTabClose(e: Event, id: string) {
     e.stopPropagation()
-    closeTab(id)
+    void closeTab(id)
   }
 </script>
 
@@ -76,7 +76,7 @@
   }
   .empty-tabs {
     padding: 4px 12px;
-    color: #999;
+    color: var(--text-subtle);
     font-size: 13px;
   }
 </style>

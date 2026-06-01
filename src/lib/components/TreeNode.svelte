@@ -77,7 +77,7 @@
   .file-icon {
     font-size: 10px;
     font-weight: bold;
-    color: #666;
+    color: var(--text-secondary);
   }
   .node-name {
     overflow: hidden;

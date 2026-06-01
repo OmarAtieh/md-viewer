@@ -1,4 +1,6 @@
 use serde::Serialize;
+use std::sync::Mutex;
+use tauri::State;
 
 #[derive(Debug, Serialize)]
 pub struct DirEntry {
@@ -52,4 +54,11 @@ pub fn write_file(path: String, content: String) -> Result<(), String> {
 #[tauri::command]
 pub fn file_exists(path: String) -> bool {
     std::path::Path::new(&path).exists()
+}
+
+pub struct PendingOpen(pub Mutex<Option<String>>);
+
+#[tauri::command]
+pub fn take_pending_open(state: State<'_, PendingOpen>) -> Option<String> {
+    state.0.lock().ok().and_then(|mut g| g.take())
 }

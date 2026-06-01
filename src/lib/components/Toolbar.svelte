@@ -36,7 +36,7 @@
     })
     if (!selected) return
     const content: string = await invoke('read_file', { path: selected })
-    openTab(selected, content)
+    await openTab(selected, content)
   }
 
   async function handleOpenFolder() {
@@ -76,6 +76,11 @@
         loading: false,
         expanded: false,
       })
+      try {
+        await invoke('watch_path', { path, recursive: true })
+      } catch (e) {
+        console.error('Failed to start watching folder:', path, e)
+      }
     } finally {
       loading = false
     }
@@ -112,7 +117,7 @@
     if (!selected) return
     await invoke('write_file', { path: selected, content: tab.content })
     if (!getAllFilePaths().includes(selected)) {
-      openTab(selected, tab.content)
+      await openTab(selected, tab.content)
     }
     markClean(getActiveTabId()!)
   }
@@ -192,7 +197,7 @@
   }
   .folder-path {
     font-size: 12px;
-    color: #888;
+    color: var(--text-muted);
     max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -200,7 +205,7 @@
   }
   .zoom-label {
     font-size: 12px;
-    color: #888;
+    color: var(--text-muted);
     min-width: 32px;
     text-align: center;
   }

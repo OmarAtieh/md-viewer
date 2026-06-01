@@ -54,7 +54,7 @@
   .split-header {
     padding: 2px 8px;
     font-size: 11px;
-    color: #888;
+    color: var(--text-muted);
     background: var(--header-bg, #fafafa);
     border-bottom: 1px solid var(--border-color, #ddd);
     text-transform: uppercase;

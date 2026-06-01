@@ -1,6 +1,6 @@
 {
   "productName": "Markdown Viewer",
-  "version": "0.1.0",
+      "version": "0.1.2",
   "identifier": "com.mdviewer.app",
   "build": {
     "frontendDist": "../dist",

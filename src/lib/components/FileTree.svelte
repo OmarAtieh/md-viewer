@@ -48,7 +48,7 @@
     if (node.is_dir) return
     try {
       const content: string = await invoke('read_file', { path: node.path })
-      openTab(node.path, content)
+      await openTab(node.path, content)
     } catch (err) {
       console.error('Failed to open file:', err)
     }
@@ -109,7 +109,7 @@
   }
   .empty-state {
     padding: 16px 8px;
-    color: #999;
+    color: var(--text-subtle);
     font-size: 13px;
     text-align: center;
   }

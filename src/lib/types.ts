@@ -25,6 +25,7 @@ export interface Tab {
   isDirty: boolean
   viewMode: ViewMode
   fileKind: FileKind
+  pendingExternalChange: boolean
 }
 
 export type ViewMode = 'source' | 'preview' | 'split'

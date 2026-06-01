@@ -67,3 +67,23 @@ export function setNodeLoading(path: string, loading: boolean): void {
     node.loading = loading
   }
 }
+
+export function markNodeStale(path: string): void {
+  function find(nodes: TreeNode[]): TreeNode | undefined {
+    for (const n of nodes) {
+      if (n.path === path) return n
+      if (n.children) {
+        const found = find(n.children)
+        if (found) return found
+      }
+    }
+    return undefined
+  }
+  if (!root) return
+  const node = find([root])
+  if (!node) return
+  node.loaded = false
+  if (node.expanded) {
+    node.children = []
+  }
+}

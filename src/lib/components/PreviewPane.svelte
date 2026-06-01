@@ -7,7 +7,7 @@
 
   let rendered = $state('')
   let isLarge = $state(false)
-  let cacheKey = $state('')
+  let lastRenderedContent = $state<string | null>(null)
 
   const render = debounce((src: string) => {
     rendered = renderMarkdown(src)
@@ -16,16 +16,15 @@
   $effect(() => {
     isLarge = content.length > getLargeFileThreshold()
     if (isLarge) {
-      rendered = `<p style="color:#888;font-style:italic;padding:2em;text-align:center">Preview disabled — large file (${(content.length / 1024 / 1024).toFixed(1)} MB). Use Source mode to edit.</p>`
+      rendered = `<p style="color:var(--text-muted);font-style:italic;padding:2em;text-align:center">Preview disabled — large file (${(content.length / 1024 / 1024).toFixed(1)} MB). Use Source mode to edit.</p>`
       return
     }
     if (fileKind === 'text') {
-      rendered = `<pre style="background:var(--pre-bg,#f5f5f5);padding:16px;border-radius:4px;overflow-x:auto;font-size:13px;line-height:1.5;color:var(--preview-text,#333)"><code>${escapeHtml(content)}</code></pre>`
+      rendered = `<pre style="background:var(--pre-bg);padding:16px;border-radius:4px;overflow-x:auto;font-size:13px;line-height:1.5;color:var(--preview-text)"><code>${escapeHtml(content)}</code></pre>`
       return
     }
-    const key = content.length + ':' + content.slice(0, 100)
-    if (key === cacheKey) return
-    cacheKey = key
+    if (content === lastRenderedContent) return
+    lastRenderedContent = content
     render(content)
   })
 
@@ -58,7 +57,7 @@
     line-height: 1.6;
   }
   .preview-empty {
-    color: #999;
+    color: var(--text-subtle);
     font-style: italic;
   }
   .preview-content :global(h1),
@@ -104,7 +103,7 @@
     text-align: left;
   }
   .preview-content :global(th) {
-    background: var(--header-bg, #f5f5f5);
+    background: var(--table-header-bg);
   }
   .preview-content :global(img) {
     max-width: 100%;
